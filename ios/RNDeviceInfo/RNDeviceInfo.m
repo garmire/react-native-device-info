@@ -51,7 +51,7 @@ RCT_EXPORT_MODULE();
 
 - (NSArray<NSString *> *)supportedEvents
 {
-    return @[@"RNDeviceInfo_batteryLevelDidChange", @"RNDeviceInfo_batteryLevelIsLow", @"RNDeviceInfo_powerStateDidChange", @"RNDeviceInfo_headphoneConnectionDidChange", @"RNDeviceInfo_brightnessDidChange"];
+    return @[@"RNDeviceInfo_batteryLevelDidChange", @"RNDeviceInfo_batteryLevelIsLow", @"RNDeviceInfo_powerStateDidChange", @"RNDeviceInfo_headphoneConnectionDidChange", @"RNDeviceInfo_audioConnectionDidChange", @"RNDeviceInfo_brightnessDidChange"];
 }
 
 - (NSDictionary *)constantsToExport {
@@ -649,6 +649,9 @@ RCT_EXPORT_METHOD(isPinOrFingerprintSet:(RCTPromiseResolveBlock)resolve rejecter
     }
     BOOL isConnected = [self isHeadphonesConnected];
     [self sendEventWithName:@"RNDeviceInfo_headphoneConnectionDidChange" body:[NSNumber numberWithBool:isConnected]];
+
+    NSString* portTypeConnected = [self getPortTypeConnected];
+    [self sendEventWithName:@"RNDeviceInfo_audioConnectionDidChange" body:portTypeConnected];
 }
 
 - (void) brightnessDidChange:(NSNotification *)notification {
@@ -733,8 +736,8 @@ RCT_EXPORT_METHOD(isLocationEnabled:(RCTPromiseResolveBlock)resolve rejecter:(RC
 }
 
 - (BOOL) isHeadphonesConnected {
-    AVAudioSessionRouteDescription* route = [[AVAudioSession sharedInstance] currentRoute];
-    for (AVAudioSessionPortDescription* desc in [route outputs]) {
+    // AVAudioSessionRouteDescription* route = [[AVAudioSession sharedInstance] currentRoute];
+    for (AVAudioSessionPortDescription* desc in [[AVAudioSession sharedInstance] availableInputs]) {
         if ([[desc portType] isEqualToString:AVAudioSessionPortHeadphones]) {
             return YES;
         }
@@ -754,6 +757,22 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(isHeadphonesConnectedSync) {
 
 RCT_EXPORT_METHOD(isHeadphonesConnected:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject) {
     resolve(@(self.isHeadphonesConnected));
+}
+
+- (NSString *) getPortTypeConnected {
+    AVAudioSessionRouteDescription* route = [[AVAudioSession sharedInstance] currentRoute];
+    for (AVAudioSessionPortDescription* desc in [route outputs]) {
+        return [desc portType];
+    }
+    return @"";
+}
+
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getPortTypeConnectedSync) {
+    return self.getPortTypeConnected;
+}
+
+RCT_EXPORT_METHOD(getPortTypeConnected:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject) {
+    resolve(self.getPortTypeConnected);
 }
 
 - (unsigned long) getUsedMemory {

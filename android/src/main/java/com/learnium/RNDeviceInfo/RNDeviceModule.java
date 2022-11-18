@@ -138,12 +138,16 @@ public class RNDeviceModule extends ReactContextBaseJavaModule {
     IntentFilter filter = new IntentFilter();
     filter.addAction(AudioManager.ACTION_HEADSET_PLUG);
     filter.addAction(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED);
+    filter.addAction(AudioManager.ACTION_SPEAKERPHONE_STATE_CHANGED);
 
     headphoneConnectionReceiver = new BroadcastReceiver() {
       @Override
       public void onReceive(Context context, Intent intent) {
         boolean isConnected = isHeadphonesConnectedSync();
         sendEvent(getReactApplicationContext(), "RNDeviceInfo_headphoneConnectionDidChange", isConnected);
+
+        String portTypeConnected = getPortTypeConnectedSync();
+        sendEvent(getReactApplicationContext(), "RNDeviceInfo_audioConnectionDidChange", portTypeConnected);
       }
     };
 
@@ -620,6 +624,28 @@ public class RNDeviceModule extends ReactContextBaseJavaModule {
   }
   @ReactMethod
   public void isHeadphonesConnected(Promise p) {p.resolve(isHeadphonesConnectedSync());}
+
+  @ReactMethod(isBlockingSynchronousMethod = true)
+  public String getPortTypeConnectedSync() {
+    AudioManager audioManager = (AudioManager)getReactApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+
+    // if (audioManager.isBluetoothScoOn() || audioManager.isBluetoothA2dpOn()) {
+    if (audioManager.isBluetoothScoOn()) {
+      return "Bluetooth";
+    }
+
+    if (audioManager.isSpeakerphoneOn()) {
+      return "Speaker";
+    }
+
+    if (audioManager.isWiredHeadsetOn()) {
+      return "Headphones";
+    }
+
+    return "Receiver";  //todo: wrong
+  }
+  @ReactMethod
+  public void getPortTypeConnected(Promise p) {p.resolve(getPortTypeConnectedSync());}
 
   @ReactMethod(isBlockingSynchronousMethod = true)
   public WritableMap getAvailableLocationProvidersSync() {

@@ -667,6 +667,15 @@ export const [isHeadphonesConnected, isHeadphonesConnectedSync] = getSupportedPl
   }
 );
 
+export const [audioConnected, audioConnectedSync] = getSupportedPlatformInfoFunctions(
+  {
+    supportedPlatforms: ['android', 'ios'],
+    getter: () => RNDeviceInfo.getPortTypeConnected(),
+    syncGetter: () => RNDeviceInfo.getPortTypeConnectedSync(),
+    defaultValue: false,
+  }
+);
+
 export const [isMouseConnected, isMouseConnectedSync] = getSupportedPlatformInfoFunctions({
   supportedPlatforms: ['windows'],
   getter: () => RNDeviceInfo.isMouseConnected(),
@@ -790,6 +799,10 @@ export function usePowerState(): Partial<PowerState> {
 
 export function useIsHeadphonesConnected(): AsyncHookResult<boolean> {
   return useOnEvent('RNDeviceInfo_headphoneConnectionDidChange', isHeadphonesConnected, false);
+}
+
+export function useAudioConnected(): AsyncHookResult<string> {
+  return useOnEvent('RNDeviceInfo_audioConnectionDidChange', audioConnected, '');
 }
 
 export function useFirstInstallTime(): AsyncHookResult<number> {
@@ -960,6 +973,8 @@ const DeviceInfo: DeviceInfoModule = {
   isEmulatorSync,
   isHeadphonesConnected,
   isHeadphonesConnectedSync,
+  audioConnected,
+  audioConnectedSync,
   isLandscape,
   isLandscapeSync,
   isLocationEnabled,
@@ -988,6 +1003,7 @@ const DeviceInfo: DeviceInfoModule = {
   usePowerState,
   useManufacturer,
   useIsHeadphonesConnected,
+  useAudioConnected,
   useBrightness,
 };
 
