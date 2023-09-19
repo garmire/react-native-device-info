@@ -288,10 +288,18 @@ export const [getHardware, getHardwareSync] = getSupportedPlatformInfoFunctions(
 
 export const [getHost, getHostSync] = getSupportedPlatformInfoFunctions({
   memoKey: 'host',
-  supportedPlatforms: ['android'],
+  supportedPlatforms: ['android', 'windows'],
   getter: () => RNDeviceInfo.getHost(),
   syncGetter: () => RNDeviceInfo.getHostSync(),
   defaultValue: 'unknown',
+});
+
+export const [getHostNames, getHostNamesSync] = getSupportedPlatformInfoFunctions({
+  memoKey: 'hostNames',
+  supportedPlatforms: ['windows'],
+  getter: () => RNDeviceInfo.getHostNames(),
+  syncGetter: () => RNDeviceInfo.getHostNamesSync(),
+  defaultValue: [] as string[],
 });
 
 export const [getProduct, getProductSync] = getSupportedPlatformInfoFunctions({
@@ -372,6 +380,14 @@ export const isTablet = () =>
     supportedPlatforms: ['android', 'ios', 'windows'],
     memoKey: 'tablet',
     getter: () => RNDeviceInfo.isTablet,
+  });
+
+export const isLowRamDevice = () =>
+  getSupportedPlatformInfoSync({
+    defaultValue: false,
+    supportedPlatforms: ['android'],
+    memoKey: 'lowRam',
+    getter: () => RNDeviceInfo.isLowRamDevice,
   });
 
 export const isDisplayZoomed = () =>
@@ -908,6 +924,8 @@ const DeviceInfo: DeviceInfoModule = {
   getHardwareSync,
   getHost,
   getHostSync,
+  getHostNames,
+  getHostNamesSync,
   getIncremental,
   getIncrementalSync,
   getInstallerPackageName,
@@ -995,6 +1013,7 @@ const DeviceInfo: DeviceInfoModule = {
   isKeyboardConnectedSync,
   isTabletMode,
   isTablet,
+  isLowRamDevice,
   isDisplayZoomed,
   supported32BitAbis,
   supported32BitAbisSync,

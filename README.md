@@ -147,7 +147,8 @@ The example app in this repository shows an example usage of every single API, c
 | [getFreeDiskStorage()](#getfreediskstorage)                       | `Promise<number>`   |  ✅  |   ✅    |   ✅    | ✅  |
 | [getFreeDiskStorageOld()](#getfreediskstorageold)                 | `Promise<number>`   |  ✅  |   ✅    |   ✅    | ✅  |
 | [getHardware()](#gethardware)                                     | `Promise<string>`   |  ❌  |   ✅    |   ❌    | ❌  |
-| [getHost()](#gethost)                                             | `Promise<string>`   |  ❌  |   ✅    |   ❌    | ❌  |
+| [getHost()](#gethost)                                             | `Promise<string>`   |  ❌  |   ✅    |   ✅    | ❌  |
+| [getHostNames()](#getHostNames)                                   | `Promise<string[]>` |  ❌  |   ❌    |   ✅    | ❌  |
 | [getIpAddress()](#getipaddress)                                   | `Promise<string>`   |  ✅  |   ✅    |   ✅    | ❌  |
 | [getIncremental()](#getincremental)                               | `Promise<string>`   |  ❌  |   ✅    |   ❌    | ❌  |
 | [getInstallerPackageName()](#getinstallerpackagename)             | `Promise<string>`   |  ✅  |   ✅    |   ✅    | ❌  |
@@ -194,6 +195,7 @@ The example app in this repository shows an example usage of every single API, c
 | [isHeadphonesConnected()](#isHeadphonesConnected)                 | `Promise<boolean>`  |  ✅  |   ✅    |   ❌    | ❌  |
 | [isPinOrFingerprintSet()](#ispinorfingerprintset)                 | `Promise<boolean>`  |  ✅  |   ✅    |   ✅    | ❌  |
 | [isTablet()](#istablet)                                           | `boolean`           |  ✅  |   ✅    |   ✅    | ❌  |
+| [isLowRamDevice()](#istablet)                                     | `boolean`           |  ❌  |   ✅    |   ❌    | ❌  |
 | [isDisplayZoomed()](#isdisplayzoomed)                             | `boolean`           |  ✅  |   ❌    |   ❌    | ❌  |
 | [isTabletMode()](#istabletmode)                                   | `Promise<bool>`     |  ❌  |   ❌    |   ✅    | ❌  |
 | [supported32BitAbis()](#supported32BitAbis)                       | `Promise<string[]>` |  ❌  |   ✅    |   ❌    | ❌  |
@@ -456,7 +458,7 @@ DeviceInfo.getDeviceName().then((deviceName) => {
 });
 ```
 
-This used to require the android.permission.BLUETOOTH but the new implementation in v3 does not need it. You may remove that from your AndroidManifest.xml if you had it for this API.
+This used to require the android.permission.BLUETOOTH but the new implementation in v3 does not need it. You may remove that from your AndroidManifest.xml if you had it for this API. iOS 16 and greater [require entitlements]([url](https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_device-information_user-assigned-device-name)) to access user-defined device name, otherwise a generic value is returned (ie. 'iPad', 'iPhone')
 
 ---
 
@@ -1207,6 +1209,19 @@ Tells if the device is a tablet.
 
 ```js
 let isTablet = DeviceInfo.isTablet();
+// true
+```
+
+---
+
+### isLowRamDevice()
+
+Tells if the device has low RAM.
+
+#### Examples
+
+```js
+let isLowRamDevice = DeviceInfo.isLowRamDevice();
 // true
 ```
 
